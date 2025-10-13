@@ -1,0 +1,73 @@
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto
+    restart: always
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    command: ["sh", "-c", "
+      touch /mosquitto/config/passwd &&
+      chmod 0700 /mosquitto/config/passwd &&
+      mosquitto_passwd -b /mosquitto/config/passwd iotuser iotpass &&
+      mosquitto -c /mosquitto/config/mosquitto.conf"]
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto/passwd:/mosquitto/config/passwd
+    
+
+  mysql:
+    image: mysql:8.0.36
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: iotdb
+      MYSQL_USER: iot
+      MYSQL_PASSWORD: iot123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  iot-api:
+    build: ./iot-api
+    container_name: iot-api
+    depends_on:
+      - mysql
+      - mosquitto
+    ports:
+      - "8080:8080"
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+  iot-simulator:
+    build: ./iot-simulator
+    container_name: iot-simulator
+    restart: unless-stopped
+    environment:
+      - MQTT_BROKER=mosquitto
+      - MQTT_PORT=1883
+      - MQTT_USER=iotuser
+      - MQTT_PASS=iotpass
+    depends_on:
+      - mosquitto
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/etc/grafana/dashboards
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:

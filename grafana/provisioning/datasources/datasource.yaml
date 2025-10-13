@@ -1,0 +1,15 @@
+apiVersion: 1
+
+datasources:
+  - name: MySQL-IoT
+    type: mysql
+    access: proxy
+    url: mysql:3306
+    database: iotdb
+    user: iot
+    secureJsonData:
+      password: iot123
+    isDefault: true
+    jsonData:
+      tlsSkipVerify: true
+      timeInterval: "5s"
