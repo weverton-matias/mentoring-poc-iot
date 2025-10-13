@@ -11,7 +11,14 @@ Para iniciar o ambiente, execute o comando abaixo:
 ```bash
 docker compose up --build
 ```
+## OBS: Aguardar entre 1 e 2 minutos para visualizar os dados no grafana
 
+## Dados Grafana
+```
+host: localhost:3000
+usuário: admin
+senha: admin
+```
 
 # helps
 
