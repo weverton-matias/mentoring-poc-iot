@@ -28,3 +28,15 @@ touch /mosquitto/config/passwd
 docker exec mosquitto chmod 0700 /mosquitto/config/passwd
 docker exec eclipse-mosquitto mosquitto_passwd -b /mosquitto/config/passwd iotuser iotpass
 ```
+
+## 🧩 Arquitetura dos dispositivos
+
+Abaixo está o diagrama da arquitetura IoT utilizada no projeto:
+
+![Arquitetura IoT](./mentoring-poc-iot.drawio.png)
+
+## 📊 Logs e visualização no Grafana
+
+Exemplo de visualização dos logs no Grafana e dos Apps:
+
+![Logs no Grafana](./poc-iot.png)
